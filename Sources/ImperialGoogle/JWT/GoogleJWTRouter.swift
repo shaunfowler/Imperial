@@ -8,6 +8,7 @@ struct GoogleJWTRouter: FederatedServiceRouter {
     let callbackCompletion: @Sendable (Request, String) async throws -> any AsyncResponseEncodable
     let scope: [String]
     let callbackURL: String
+    let callbackRoute: String?
     let accessTokenURL: String = "https://www.googleapis.com/oauth2/v4/token"
     let authURL: String
     let callbackHeaders: HTTPHeaders = {
@@ -17,10 +18,11 @@ struct GoogleJWTRouter: FederatedServiceRouter {
     }()
 
     init(
-        callback: String, scope: [String], completion: @escaping @Sendable (Request, String) async throws -> some AsyncResponseEncodable
+        callback: String, callbackRoute: String? = nil, scope: [String], completion: @escaping @Sendable (Request, String) async throws -> some AsyncResponseEncodable
     ) throws {
         self.tokens = try GoogleJWTAuth()
         self.callbackURL = callback
+        self.callbackRoute = callbackRoute
         self.authURL = callback
         self.callbackCompletion = completion
         self.scope = scope

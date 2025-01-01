@@ -24,6 +24,8 @@ package protocol FederatedServiceRouter: Sendable {
     /// The URL (or URI) for that route that the provider will fire when the user authenticates with the OAuth provider.
     var callbackURL: String { get }
 
+    var callbackRoute: String? { get }
+
     /// HTTPHeaders for the Callback request
     var callbackHeaders: HTTPHeaders { get }
 
@@ -37,11 +39,13 @@ package protocol FederatedServiceRouter: Sendable {
     ///
     /// - Parameters:
     ///   - callback: The callback URL that the OAuth provider will redirect to after authenticating the user.
+    ///   - callbackRoute: The vapour route to register to handler the  provider callback after authenticating the user.
     ///   - scope: The scopes to get access to on authentication.
     ///   - completion: The completion handler that will be fired at the end of the `callback` route. The access token is passed into it.
     /// - Throws: Any errors that could occur in the implementation.
     init(
         callback: String,
+        callbackRoute: String?,
         scope: [String],
         completion: @escaping @Sendable (Request, String) async throws -> some AsyncResponseEncodable
     ) throws
@@ -85,7 +89,7 @@ extension FederatedServiceRouter {
     package func configureRoutes(
         withAuthURL authURL: String, authenticateCallback: (@Sendable (Request) async throws -> Void)?, on router: some RoutesBuilder
     ) throws {
-        router.get(callbackURL.pathComponents, use: callback)
+        router.get(callbackRoute?.pathComponents ?? callbackURL.pathComponents, use: callback)
         router.get(authURL.pathComponents) { req async throws -> Response in
             let redirect: Response = req.redirect(to: try self.authURL(req))
             guard let authenticateCallback else {

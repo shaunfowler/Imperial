@@ -7,10 +7,11 @@ public struct GoogleJWT: FederatedService {
         authenticate: String,
         authenticateCallback: (@Sendable (Request) async throws -> Void)?,
         callback: String,
+        callbackRoute: String?,
         scope: [String] = [],
         completion: @escaping @Sendable (Request, String) async throws -> some AsyncResponseEncodable
     ) throws {
-        try GoogleJWTRouter(callback: callback, scope: scope, completion: completion)
+        try GoogleJWTRouter(callback: callback, callbackRoute: callbackRoute, scope: scope, completion: completion)
             .configureRoutes(withAuthURL: authenticate, authenticateCallback: authenticateCallback, on: routes)
     }
 }

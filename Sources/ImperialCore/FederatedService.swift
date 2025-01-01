@@ -30,7 +30,8 @@ public protocol FederatedService: Sendable {
     ///   - routes: The routes builder to configure the routes for the service.
     ///   - authenticate: The path for the route that will redirect the user to the OAuth provider for authentication.
     ///   - authenticateCallback: Execute custom code within the authenticate closure before redirection.
-    ///   - callback: The path (or URI) for the route that the provider will call when the user authenticates.
+    ///   - callback: The URL for the route that the provider will call when the user authenticates.
+    ///   - callbackRoute: The route path to regstier with vapor that the provider will call when the user authenticates.
     ///   - scope: The scopes to send to the provider to request access to.
     ///   - completion: The completion handler that will fire at the end of the callback route. The access token is passed into the callback and the response that is returned will be returned from the callback route. This will usually be a redirect back to the app.
     /// - Throws: Any errors that occur in the implementation.
@@ -39,6 +40,7 @@ public protocol FederatedService: Sendable {
         authenticate: String,
         authenticateCallback: (@Sendable (Request) async throws -> Void)?,
         callback: String,
+        callbackRoute: String?,
         scope: [String],
         completion: @escaping @Sendable (Request, String) async throws -> some AsyncResponseEncodable
     ) throws

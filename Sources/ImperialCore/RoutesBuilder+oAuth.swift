@@ -15,6 +15,7 @@ extension RoutesBuilder {
         authenticate authUrl: String,
         authenticateCallback: (@Sendable (Request) async throws -> Void)? = nil,
         callback: String,
+        callbackRoute: String?,
         scope: [String] = [],
         completion: @escaping @Sendable (Request, String) async throws -> some AsyncResponseEncodable
     ) throws where OAuthProvider: FederatedService {
@@ -23,6 +24,7 @@ extension RoutesBuilder {
             authenticate: authUrl,
             authenticateCallback: authenticateCallback,
             callback: callback,
+            callbackRoute: callbackRoute,
             scope: scope,
             completion: completion
         )
@@ -46,7 +48,7 @@ extension RoutesBuilder {
         redirect redirectURL: String
     ) throws where OAuthProvider: FederatedService {
         try self.oAuth(
-            from: OAuthProvider.self, authenticate: authUrl, authenticateCallback: authenticateCallback, callback: callback, scope: scope
+            from: OAuthProvider.self, authenticate: authUrl, authenticateCallback: authenticateCallback, callback: callback, callbackRoute: nil, scope: scope
         ) { (request, _) in
             return request.redirect(to: redirectURL)
         }
